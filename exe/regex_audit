@@ -1,3 +1,21 @@
 #!/usr/bin/env ruby
 
 require "regex_audit"
+
+ARGV.each do |arg|
+  paths =
+    if File.directory?(arg)
+      glob = File.join(arg, "**/*.rb")
+      Dir.glob(glob).select do |path|
+        # only regular files
+        File.file?(path)
+      end
+    else
+      [arg]
+    end
+
+  paths.each do |path|
+    audit = RegexAudit.new(path)
+    audit.print(STDOUT)
+  end
+end
